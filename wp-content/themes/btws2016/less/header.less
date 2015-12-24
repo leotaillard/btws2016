@@ -1,0 +1,306 @@
+@import "mixins.less";
+@import "colors.less";
+
+#btws-logo-little {
+	opacity: 0;
+	display: inline-block;
+	position: fixed;
+	top: 30px;
+	left: @margin-desktop + 10px;
+	@media only screen and (max-width: 960px) {
+		left: calc(@margin-ipad + 10px);
+	}
+	@media only screen and (max-width: 680px) {
+		left: calc(@margin-iphone + 10px);
+	}
+	z-index: 103;
+}
+.full-page {
+	pointer-events: none;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	left: 0;
+	top: 0;
+	text-align: center;
+	opacity: 0;
+	z-index: -3;
+	.transition(opacity .25s linear);
+	svg{
+		width: 100%;
+		height: 100%;
+	}
+	&.appear {
+		opacity: 1;
+		.transition(opacity .25s linear);
+	}
+}
+#main-nav{
+	font-family: 'px_groteskregular';
+	position: fixed;
+	left: 0;
+	width: 100%;
+	top: 0;
+	text-transform: uppercase;
+	text-align: center;
+	background: @basic_border;
+	padding: 20px 0;
+	opacity: 1;
+	.transition(opacity .85s linear);
+	.menu-main-nav-container {
+		float: right;
+		padding: 0 40px 0 0;
+	}
+	#btws-logo-nav {
+		float: left;
+		padding: 0 0 0 40px;
+		opacity: 0;
+	}
+	#menu-main-nav > li{
+		display: inline-block;
+		padding-left: 30px;
+	}
+}
+#main-nav.disappear {
+	opacity: 0;
+	.transition(opacity .15s linear);
+}
+.btws-nav {
+	width:100%;
+	padding: 0 0;
+}
+.btws-header{
+	position: relative;
+	z-index: 666; //number of the beast
+}
+.btws-header h1{
+	width: 100%;
+	text-align: center;
+	font-size: 1.4rem;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	padding: 8% 0;
+}
+
+@media only screen and (min-width: 768px) {
+  .btws-header h1{
+    font-size: 2.6rem;
+    font-weight: 300;
+  }
+}
+/* #HEADLINE HIDDEN
+================================================== */
+
+#headline-hidden{
+	width: 100%;
+    font-family: 'globe_scriptregular';
+	text-transform: capitalize;
+	padding-left: 40px;
+  	padding-right: 40px;
+	@media only screen and (max-width: 960px) {
+	padding-left: 20px;
+  	padding-right: 20px;
+	}
+	@media only screen and (max-width: 680px) {
+	padding-left: 10px;
+  	padding-right: 10px;
+	}
+
+}
+.slabtexted .slabtext {
+    display:-moz-inline-box;
+    display:inline-block;
+    white-space:nowrap;
+}
+.slabtextinactive .slabtext {
+    display:inline;
+    white-space:normal;
+    font-size:1em !important;
+    letter-spacing:inherit !important;
+    word-spacing:inherit !important;
+    *letter-spacing:0 !important;
+    *word-spacing:0 !important;
+}
+.slabtextdone .slabtext {
+	display:block;
+}
+/* #BIG MENU
+================================================== */
+#trigger-overlay {
+	position: fixed;
+	top: 50px;
+	right: calc(@margin-desktop + 35px + 10px);
+	@media only screen and (max-width: 960px) {
+		right: calc(@margin-ipad + 35px + 10px);
+	}
+	@media only screen and (max-width: 680px) {
+		right: calc(@margin-iphone + 35px + 10px);
+	}
+	z-index: 102;
+}
+body.single, body.blog, body.page-id-30 {
+  #trigger-overlay span, #trigger-overlay span:before, #trigger-overlay span:after{
+	  background: @basic_blue;
+  }
+  #trigger-overlay.active span{
+	  background: transparent;
+  }
+}
+body.page-template-template-last-work, body.single-work, body.page-id-7{
+	#trigger-overlay span, #trigger-overlay span:before, #trigger-overlay span:after{
+		background: @basic_red;
+	}
+	#trigger-overlay.active span{
+		background: transparent;
+	}
+}
+#trigger-overlay span, #trigger-overlay span:before, #trigger-overlay span:after {
+  cursor: pointer;
+  border-radius: 1px;
+  height: 5px;
+  width: 35px;
+  background: black;
+  position: absolute;
+  display: block;
+  content: '';
+}
+#trigger-overlay.active span, #trigger-overlay.active span:before, #trigger-overlay.active span:after {
+	background: white;
+}
+#trigger-overlay span:before {
+  top: -10px;
+}
+#trigger-overlay span:after {
+  bottom: -10px; 
+}
+#trigger-overlay span, #trigger-overlay span:before, #trigger-overlay span:after {
+  .transition(all 500ms linear);
+}
+#trigger-overlay.active span {
+  background-color: transparent;
+}
+#trigger-overlay.active span:before, #trigger-overlay.active span:after {
+  top: 0;
+}
+#trigger-overlay.active span:before {
+  .transform(rotate(45deg))
+}
+#trigger-overlay.active span:after {
+  .transform(rotate(-45deg))
+}
+/* Overlay style */
+.overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: black;
+}
+
+/* Overlay closing cross */
+.overlay .overlay-close {
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	overflow: hidden;
+	border: none;
+	background: url(../img/cross.png) no-repeat center center;
+	text-indent: 200%;
+	color: transparent;
+	outline: none;
+	z-index: 100;
+}
+
+/* Menu style */
+.overlay nav {
+	text-align: center;
+	position: relative;
+	top: 50%;
+	// height: 60%;
+	// font-size: 54px;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+.overlay ul li ul.sub-menu a{
+  font-size: 20px;
+}
+
+.overlay ul {
+	list-style: none;
+	padding: 0;
+	margin: 0 auto;
+	display: inline-block;
+	height: 100%;
+	position: relative;
+}
+
+.overlay ul li {
+	display: block;
+	// height: 20%;
+	// height: calc(100% / 5);
+	// min-height: 54px;
+}
+
+.overlay ul li a {
+	display: block;
+	color: #fff;
+	-webkit-transition: color 0.2s;
+	transition: color 0.2s;
+	font-size: 54px;
+	padding-bottom: 90px;
+	line-height: 0px;
+}
+
+.overlay ul li a:hover,
+.overlay ul li a:focus {
+	color: @basic_grey;
+}
+
+/* Effects */
+.overlay-hugeinc {
+	opacity: 0;
+	visibility: hidden;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.overlay-hugeinc.open {
+	opacity: 1;
+	visibility: visible;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+	z-index: 100;
+}
+
+.overlay-hugeinc nav {
+	.perspective(1200px);
+}
+
+.overlay-hugeinc nav ul {
+	opacity: 0.8;
+	.transform(translateY(-25%) rotateX(35deg));
+	-webkit-transition: -webkit-transform 0.5s, opacity 0.5s;
+	transition: transform 0.5s, opacity 0.5s;
+}
+
+.overlay-hugeinc.open nav ul {
+	opacity: 1;
+	.transform(rotateX(0deg));
+}
+
+.overlay-hugeinc.close nav ul {
+	.transform(translateY(25%) rotateX(-35deg));
+}
+
+@media screen and (max-height: 30.5em) {
+	.overlay nav {
+		height: 70%;
+		font-size: 34px;
+	}
+	.overlay ul li {
+		min-height: 34px;
+	}
+}

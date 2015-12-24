@@ -1,0 +1,144 @@
+@import "mixins.less";
+@import "colors.less";
+
+// var
+@margin-desktop: 80px;
+@margin-ipad: 40px;
+@margin-iphone: 20px;
+
+
+
+
+/* -------------------------------- 
+
+Primary style
+
+-------------------------------- */
+*, *::after, *::before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+	font-size: 1.6rem;
+	line-height: 2.6rem;
+	color: #000;
+	background-color: @basic_border;
+    font-family: 'px_grotesklight';
+    &.home{
+		font-family: 'px_groteskregular';
+    }
+	margin-left: @margin-desktop;
+	margin-right: @margin-desktop;
+	@media only screen and (max-width: 960px) {
+		margin-left: @margin-ipad;
+		margin-right: @margin-ipad;
+	}
+	@media only screen and (max-width: 680px) {
+		margin-left: @margin-iphone;
+		margin-right: @margin-iphone;
+	}
+
+}
+body.single, body.single #btws-logo-little svg, body.blog, body.blog #btws-logo-little svg, body.single .btws-header svg, body.blog .btws-header svg, body.page-id-30, body.page-id-30 #btws-logo-little svg, body.page-id-30 .btws-header svg, body.page-id-30 #btws-social svg, body.single #btws-social svg, body.blog #btws-social svg {
+	color: @basic_blue;
+	fill: @basic_blue;
+	a {
+		color: @basic_blue;
+	}
+}
+body.page-template-template-last-work, body.page-template-template-last-work #btws-logo-little svg, body.single-work, body.single-work #btws-logo-little svg, body.page-template-template-last-work .btws-header svg, body.single-work .btws-header svg, body.page-id-7, body.page-id-7 #btws-logo-little svg, body.page-id-7 .btws-header svg, body.page-id-7 #btws-social svg, body.single-work #btws-social svg, body.page-template-template-last-work #btws-social svg{
+	color: @basic_red;
+	fill:@basic_red;
+	a{
+		color: @basic_red;
+	}
+}
+
+@media only screen and (min-width: 1048px) {
+  body {
+    /* hide horizontal scroll bar in IE */
+    overflow-x: hidden;
+  }
+}
+h1,h2,h3,h4,h5 {
+	text-transform: uppercase;
+	font-family: 'px_groteskregular';
+	margin: 15px 0;
+	font-weight: inherit;
+}
+p{
+}
+a {
+	color: black;
+	text-decoration: none;
+}
+.light a {
+	color: white;
+}
+a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+div.see-more-link{
+	a{
+		display: inline-block;
+	    width: 30px;
+	    height: 30px;
+	    margin: 15px 0;
+	}
+}
+a.see-more {
+	display: inline-block;
+	margin: 15px;
+	width: 15px;
+	height: 15px;
+	background-color: black;
+	color: white;
+	.transition(background-color .25s linear);
+	&:hover{
+		text-decoration: none;
+		background-color: white;
+		color: black;
+		.transition(background-color .25s linear);
+	}
+	.rotate (45deg);
+	span {
+		display: inline-block;
+		.rotate (-45deg);
+		.transform-origin (-4px, 11px);
+	}
+}
+.current_page_item > a {
+	// font-size: 1.8em;
+  text-decoration: underline;
+}
+img{
+	max-width: 100%;
+}
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+/**
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+.cf {
+    *zoom: 1;
+}

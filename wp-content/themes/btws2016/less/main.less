@@ -1,0 +1,235 @@
+/*
+Theme Name: theme
+Description: description
+Version: 1.0
+Author: Léo Taillard
+*/
+
+@import "mixins.less";
+@import "colors.less";
+
+
+// var
+@margin-desktop: 80px;
+@margin-ipad: 40px;
+@margin-iphone: 20px;
+
+
+
+@import "base.less";
+@import "header.less";
+
+@import "archives.less";
+@import "footer.less";
+@import "home.less";
+
+@import "animation.less";
+
+
+/* -------------------------------- 
+
+Main Components 
+
+-------------------------------- */
+.btws-the-visit {
+	#guided-tour {
+		width: 30px;
+		cursor: pointer;
+	}
+}
+.btws-the-visit,.btws-the-infos, .btws-the-author, .btws-the-date{
+	margin: 30px auto 30px auto;
+	text-align: center;
+}
+.btws-main-content {
+	min-height: 25%;
+	padding-bottom : 7.5em;
+	@media only screen and (max-width: 680px){
+		padding: 4vh 3%;
+	}
+	.btws-the-title {
+		text-align: center;
+		font-size: 5em;
+	    font-family: 'globe_scriptregular';
+	    text-transform: capitalize;
+		padding: 0em;
+	    line-height: normal;
+	}
+}
+.btws-fixed-background {
+  position: relative;
+  // display: flex;
+  padding-top: 3em;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+.btws-fixed-background {
+	min-height: 100%;
+    @media only screen and (max-width: 680px){
+		min-height: 50%;
+	}
+	padding: 0;
+}
+
+body.blog .btws-fixed-background, body.single-post .btws-fixed-background, body.blog .headline, body.single-post .headline {
+	background-color: @basic_blue;
+	color: white;
+}
+body.page-template-template-last-work .btws-fixed-background, body.single-work .btws-fixed-background,body.page-template-template-last-work .headline, body.single-work .headline {
+	background-color: @basic_red;
+	color: white;
+}
+
+.btws-fixed-background .btws-content {
+	z-index: 2;
+	width: 100%;
+    @media only screen and (max-width: 680px){
+		width: 100%;
+    }
+	@media only screen and (min-width: 1048px) {
+		width: 30%;
+	}
+	h2{
+		font-size: 3rem;
+		line-height: 2;
+	}
+}
+.headline {
+	z-index: 2;
+	width: 100%;
+	padding: 20% 0;
+	h2 {
+		text-align: center;
+		font-size: 5em;
+		line-height: 1.5em;
+		@media only screen and (max-width: 960px){
+		font-size: 3em;
+		}
+	}
+}
+.btws-fixed-background .btws-content::after {
+	display: none !important;
+}
+@media only screen and (min-width: 1048px) {
+	.btws-fixed-background {
+		background-attachment: fixed;
+	}
+	.btws-fixed-background.no-fixed {
+		background-attachment: inherit;
+	}
+
+}
+
+/* #INSTAFEED
+================================================== */
+ul#instafeed{
+	width: 100%;
+	li{
+		width: 25%;
+		float: left;
+		display: block;
+		@media only screen and (max-width: 560px) {
+			width: 50%;
+		}
+		img {
+			display: block;
+		}
+	}
+}
+.greyscale {
+	-webkit-filter: grayscale(100%);
+	filter: grayscale(100%);
+}
+/* PAGINATION
+================================================== */
+
+.btws-nav.journal{
+	background: @basic_blue;
+}
+.btws-nav.works{
+	background: @basic_red;
+}
+.btws-nav{
+	width: 100%;
+	text-align: center;
+	&.no_prev li, &.no_next li{
+		display: flex;
+		float: left;
+		width: 50%;
+		@media only screen and (max-width: 768px) {
+			width: 100%;
+		}
+	}
+	li {
+		display: flex;
+		float: left;
+		width: 25%;
+		@media only screen and (max-width: 768px) {
+			width: 100%;
+		}
+		&#archive{
+			width: 50%;
+			@media only screen and (max-width: 768px) {
+				width: 100%;
+			}
+		}
+		a{
+			padding: 30px 0;
+			display: block;
+			width: 100%;
+			height: 100%;
+			color: white;
+		}
+	}
+}
+
+/* #Author
+================================================== */
+.btws-author {
+	padding: 30px 0;
+	text-align: center;
+}
+/* #Font-Face
+================================================== */
+@font-face {
+  font-family: 'px_groteskregular';
+  src: url('../fonts/pxgrotesk-regular-webfont.eot');
+  src: url('../fonts/pxgrotesk-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/pxgrotesk-regular-webfont.woff') format('woff'), url('../fonts/pxgrotesk-regular-webfont.ttf') format('truetype'), url('../fonts/pxgrotesk-regular-webfont.svg#px_groteskregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+    font-family: 'px_groteskbold';
+    src: url('../fonts/pxgrotesk-bold-webfont.eot');
+    src: url('../fonts/pxgrotesk-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/pxgrotesk-bold-webfont.woff2') format('woff2'),
+         url('../fonts/pxgrotesk-bold-webfont.woff') format('woff'),
+         url('../fonts/pxgrotesk-bold-webfont.ttf') format('truetype'),
+         url('../fonts/pxgrotesk-bold-webfont.svg#px_groteskbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'px_grotesklight';
+    src: url('../fonts/pxgrotesk-light-webfont.eot');
+    src: url('../fonts/pxgrotesk-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/pxgrotesk-light-webfont.woff2') format('woff2'),
+         url('../fonts/pxgrotesk-light-webfont.woff') format('woff'),
+         url('../fonts/pxgrotesk-light-webfont.ttf') format('truetype'),
+         url('../fonts/pxgrotesk-light-webfont.svg#px_grotesklight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'globe_scriptregular';
+    src: url('../fonts/globescript-webfont.eot');
+    src: url('../fonts/globescript-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/globescript-webfont.woff2') format('woff2'),
+         url('../fonts/globescript-webfont.woff') format('woff'),
+         url('../fonts/globescript-webfont.ttf') format('truetype'),
+         url('../fonts/globescript-webfont.svg#globe_scriptregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}

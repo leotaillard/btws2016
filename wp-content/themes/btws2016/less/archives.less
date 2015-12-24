@@ -1,0 +1,52 @@
+/* #ARCHIVES
+================================================== */
+
+
+.btws-archive {
+	h2{
+		font-size: 5em;
+		@media only screen and (max-width: 680px) {
+			font-size: 2em;
+		}
+	    text-transform: capitalize;
+	    line-height: normal;
+	}
+	a {
+		display: inline-block;
+		padding: 10% 0 !important;
+		width: 100%;
+	}
+	text-align: center;
+	min-height: 0 !important;
+
+
+
+	&.post a{
+		.transition(all 0.5s linear);
+		@media only screen and (max-width: 680px) {
+			font-size: 2em;
+		}
+		&:hover{
+			background: fade(@basic_blue, 90%);
+			color: white;
+			.transition(all 0.5s linear);
+			a{
+				color: white;
+				.transition(all 0.5s linear);
+			}
+		}
+	}
+	&.work a{
+		.transition(all 0.5s linear);
+		&:hover{
+			background: fade(@basic_red, 90%);
+			color: white;
+			.transition(all 0.5s linear);
+			a{
+				color: white;
+				.transition(all 0.5s linear);
+			}
+		}
+	}
+
+}

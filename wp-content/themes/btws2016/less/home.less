@@ -1,0 +1,125 @@
+@import "mixins.less";
+@import "colors.less";
+
+.landing-page{
+	color: white;
+    height:100%;
+    width:100%;
+    position:absolute;
+    z-index: 66;
+	padding-top:8%;
+	font-family: 'globe_scriptregular';
+    font-size: 40px;
+    line-height: 60px;
+		@media screen and (max-width: 780px) {
+	    font-size: 20px;
+	    line-height: 40px;
+	}
+    top:0;
+    left:0;
+	text-align: center;
+	background: fade(black, 90%);
+	cursor: pointer;
+	.icon {
+		margin: 30px 0;
+		#star {
+			fill:#fff;
+			width: 60px;
+			&:hover {
+				> .etoile {
+					opacity: 1;
+					.transition(all 0.5s linear);
+				}
+			}
+		}
+		.etoile {
+			opacity: 0;
+			.transition(all 0.5s linear);
+		}
+	}
+}
+
+body.home {
+	.btws-the-author, .btws-the-date{
+		margin-bottom: 0px;
+	}
+	.btws-the-date {
+		margin-top: 10px;
+	}
+	h2{
+	    font-family: 'globe_scriptregular';
+		text-transform: capitalize;
+	}
+	.btws-frontpage-menu{
+		h1{
+			text-align: center;
+		}
+		.btws-frontpage-menu-item{
+			margin: 0;
+			padding: 0 2%;
+			text-align: center;
+			&#other-gazette, &#other-gazette a {
+				color: @basic_blue;
+			}
+			&#other-gazette a.see-more-link{
+				// color: white;
+				// background-color: @basic_blue;
+				fill:@basic_blue;
+				&:hover{
+					// color: @basic_blue;
+					// background-color: white;
+				}
+			}
+			&#other-work, &#other-work a{
+				color: @basic_red;
+			}
+			&#other-work a.see-more-link{
+				// color: white;
+				// background-color: @basic_red;
+				fill:@basic_red;
+				&:hover{
+					// color: @basic_red;
+					// background-color: white;
+				}
+			}
+			h1 {
+				border-top: 1px solid;
+				border-bottom: 1px solid;
+				text-align: center;
+			}
+			article{
+				padding: 20px 0;
+				img{
+					padding-bottom: 0;
+				}
+				h2{
+					padding: 30px 0 15px 0;
+				}
+			}
+		}
+	}
+}
+body.home #gazette {
+		min-height: 67%;
+		position: relative;
+		margin-bottom: 20px;
+		.btws-the-date{
+			padding-top: 15px;
+			text-align: center;
+			width: 100%;
+			text-transform: uppercase;
+		}
+		.btws-content {
+			text-align: center;
+			width: 100%;
+			position: absolute;
+			top: inherit;
+			left: 0;
+			bottom: 20px;
+			-webkit-transform: translateY(0%);
+			-moz-transform: translateY(0%);
+			-ms-transform: translateY(0%);
+			-o-transform: translateY(0%);
+			transform: translateY(0%);
+		}
+}
