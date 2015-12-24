@@ -158,7 +158,17 @@
         element: elementButton,
         duration: 5000,
         mainAudio: '<?php echo bloginfo('template_url'); ?>/assets/music/elevator-music.mp3',
-        endAudio:  '<?php echo bloginfo('template_url'); ?>/assets/music/ding.mp3'
+        endAudio:  '<?php echo bloginfo('template_url'); ?>/assets/music/ding.mp3',
+		startcallback: function(){
+		// is called, when the elevator starts moving
+			jQuery('body').addClass('spaceboots');
+		},
+		endcallback: function() {
+		// is called, when the elevator reached target level
+			jQuery('body').removeClass('spaceboots');
+		}
+
+
     });
 
 
@@ -170,14 +180,6 @@
 	jQuery('#headline-hidden').bigtext();
 	// jQuery('.btws-the-team h2').bigtext();
 	jQuery("body.home h2").fitText(1, {
-        minFontSize: '40px',
-        maxFontSize: '60px'
-	});
-	jQuery("footer h2").fitText(1, {
-        minFontSize: '40px',
-        maxFontSize: '60px'
-	});
-	jQuery(".isotope-item h2").fitText(1, {
         minFontSize: '40px',
         maxFontSize: '60px'
 	});
