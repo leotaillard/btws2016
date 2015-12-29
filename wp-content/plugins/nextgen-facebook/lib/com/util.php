@@ -370,10 +370,9 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 				$ret = true;
 			elseif ( is_admin() ) {
 				$screen_id = self::get_screen_id();
-
 				// exclude post/page/media editing lists
-				if ( strpos( $screen_id, 'edit-' ) !== false || 
-					$screen_id === 'upload' )
+				if ( $screen_id === 'upload' ||
+					strpos( $screen_id, 'edit-' ) === 0 )
 						$ret = false;
 				elseif ( self::get_req_val( 'post_ID', 'POST' ) !== '' ||
 					self::get_req_val( 'post', 'GET' ) !== '' )
@@ -486,13 +485,23 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 			if ( is_author() ) {
 				$ret = true;
 			} elseif ( is_admin() ) {
-				if ( ( $screen_id = self::get_screen_id() ) !== false &&
-					( $screen_id === 'user-edit' || $screen_id === 'profile' ) )
+				$screen_id = self::get_screen_id();
+				if ( $screen_id !== false ) {
+					switch ( $screen_id ) {
+						case 'profile':
+						case 'user-edit':
+						case ( strpos( $screen_id, 'profile_page_' ) === 0 ? true : false ):
+						case ( strpos( $screen_id, 'users_page_' ) === 0 ? true : false ):
+							$ret = true;
+							break;
+					}
+				}
+				if ( $ret === false ) {
+					if ( self::get_req_val( 'user_id' ) !== '' )
 						$ret = true;
-				elseif ( self::get_req_val( 'user_id' ) !== '' )
-					$ret = true;
-				elseif ( basename( $_SERVER['PHP_SELF'] ) === 'profile.php' )
-					$ret = true;
+					elseif ( basename( $_SERVER['PHP_SELF'] ) === 'profile.php' )
+						$ret = true;
+				}
 			}
 			$ret = apply_filters( 'sucom_is_author_page', $ret );
 			if ( $cache )
@@ -762,7 +771,7 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 				} else $trailing = '';							// truncate trailing string if text is less than maxlen
 				$text = $text.$trailing;						// trim and add trailing string (if provided)
 			}
-			$text = htmlentities( $text, ENT_QUOTES, $charset, false );			// double_encode = false
+			//$text = htmlentities( $text, ENT_QUOTES, $charset, false );
 			$text = preg_replace( '/&nbsp;/', ' ', $text);					// just in case
 			return $text;
 		}
@@ -772,7 +781,7 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 			$alt_prefix = isset( $this->p->options['plugin_img_alt_prefix'] ) ?
 				$this->p->options['plugin_img_alt_prefix'] : 'Image:';
 			$text = strip_shortcodes( $text );						// remove any remaining shortcodes
-			$text = html_entity_decode( $text, ENT_QUOTES, get_bloginfo( 'charset' ) );
+			//$text = html_entity_decode( $text, ENT_QUOTES, get_bloginfo( 'charset' ) );	// leave it encoded
 			$text = preg_replace( '/[\s\n\r]+/s', ' ', $text );				// put everything on one line
 			$text = preg_replace( '/<\?.*\?>/i', ' ', $text);				// remove php
 			$text = preg_replace( '/<script\b[^>]*>(.*?)<\/script>/i', ' ', $text);		// remove javascript
@@ -907,44 +916,59 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 			return $plugin_info;
 		}
 
-		public function get_admin_url( $submenu = '', $link_text = '', $lca = '' ) {
-			$query = '';
+		public function get_admin_url( $menu_id = '', $link_text = '', $menu_lib = '' ) {
 			$hash = '';
-			$url = '';
-			$lca = empty( $lca ) ? $this->p->cf['lca'] : $lca;
+			$query = '';
+			$admin_url = '';
+			$lca = $this->p->cf['lca'];
 
-			if ( strpos( $submenu, '#' ) !== false )
-				list( $submenu, $hash ) = explode( '#', $submenu );
-			if ( strpos( $submenu, '?' ) !== false )
-				list( $submenu, $query ) = explode( '?', $submenu );
+			// $menu_id may start with a hash or query, so parse before checking its value
+			if ( strpos( $menu_id, '#' ) !== false )
+				list( $menu_id, $hash ) = explode( '#', $menu_id );
 
-			if ( $submenu == '' ) {
+			if ( strpos( $menu_id, '?' ) !== false )
+				list( $menu_id, $query ) = explode( '?', $menu_id );
+
+			if ( empty( $menu_id ) ) {
 				$current = $_SERVER['REQUEST_URI'];
 				if ( preg_match( '/^.*\?page='.$lca.'-([^&]*).*$/', $current, $match ) )
-					$submenu = $match[1];
-				else $submenu = key( $this->p->cf['*']['lib']['submenu'] );
+					$menu_id = $match[1];
+				else $menu_id = key( $this->p->cf['*']['lib']['submenu'] );	// default to first submenu
 			}
 
-			if ( array_key_exists( $submenu, $this->p->cf['*']['lib']['setting'] ) ) {
-				$page = 'options-general.php?page='.$lca.'-'.$submenu;
-				$url = admin_url( $page );
-			} elseif ( array_key_exists( $submenu, $this->p->cf['*']['lib']['submenu'] ) ) {
-				$page = 'admin.php?page='.$lca.'-'.$submenu;
-				$url = admin_url( $page );
-			} elseif ( array_key_exists( $submenu, $this->p->cf['*']['lib']['sitesubmenu'] ) ) {
-				$page = 'admin.php?page='.$lca.'-'.$submenu;
-				$url = network_admin_url( $page );
+			// find the menu_lib value for this menu_id
+			if ( empty( $menu_lib ) ) {
+				foreach ( $this->p->cf['*']['lib'] as $menu_lib => $menu ) {
+					if ( isset( $menu[$menu_id] ) )
+						break;
+					else $menu_lib = '';
+				}
+			}
+
+			if ( empty( $menu_lib ) ||
+				empty( $this->p->cf['wp']['admin'][$menu_lib]['page'] ) )
+					return;
+
+			$parent_slug = $this->p->cf['wp']['admin'][$menu_lib]['page'].'?page='.$lca.'-'.$menu_id;
+
+			switch ( $menu_lib ) {
+				case 'sitesubmenu':
+					$admin_url = network_admin_url( $parent_slug );
+					break;
+				default:
+					$admin_url = admin_url( $parent_slug );
+					break;
 			}
 
 			if ( ! empty( $query ) ) 
-				$url .= '&'.$query;
+				$admin_url .= '&'.$query;
 
 			if ( ! empty( $hash ) ) 
-				$url .= '#'.$hash;
+				$admin_url .= '#'.$hash;
 
 			if ( empty( $link_text ) ) 
-				return $url;
-			else return '<a href="'.$url.'">'.$link_text.'</a>';
+				return $admin_url;
+			else return '<a href="'.$admin_url.'">'.$link_text.'</a>';
 		}
 
 		public function delete_expired_db_transients( $all = false ) { 
@@ -1089,12 +1113,16 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 				$class_link .= ' '.$class_link.$metabox;
 			}
 
-			extract( array_merge( array( 'scroll_to' => '' ), $args ) );
+			// allow a css ID to be passed as a query argument
+			extract( array_merge( array(
+				'scroll_to' => isset( $_GET['scroll_to'] ) ? 
+					'#'.SucomUtil::sanitize_key( $_GET['scroll_to'] ) : '',
+			), $args ) );
 
-			echo '<script type="text/javascript">jQuery(document).ready(function(){ 
-				sucomTabs(\''.$metabox.'\', \''.$default_tab.'\', \''.$scroll_to.'\'); });</script>
-			<div class="'.$class_metabox_tabs.'">
-			<ul class="'.$class_metabox_tabs.'">'."\n";
+			echo "\n".'<script type="text/javascript">jQuery(document).ready(function(){ '.
+				'sucomTabs(\''.$metabox.'\', \''.$default_tab.'\', \''.$scroll_to.'\'); });</script>'."\n";
+			echo '<div class="'.$class_metabox_tabs.'">'."\n";
+			echo '<ul class="'.$class_metabox_tabs.'">'."\n";
 			foreach ( $tabs as $tab => $title ) {
 				$class_href_key = $class_tabset.$metabox.'-tab_'.$tab;
 				echo '<div class="tab_left">&nbsp;</div><li class="'.

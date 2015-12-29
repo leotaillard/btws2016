@@ -157,18 +157,16 @@
     var elevator = new Elevator({
         element: elementButton,
         duration: 5000,
-        mainAudio: '<?php echo bloginfo('template_url'); ?>/assets/music/elevator-music.mp3',
-        endAudio:  '<?php echo bloginfo('template_url'); ?>/assets/music/ding.mp3',
-		startcallback: function(){
+        mainAudio: '<?php echo bloginfo('template_url'); ?>/assets/music/rocket.mp3',
+        // endAudio:  '<?php echo bloginfo('template_url'); ?>/assets/music/ding.mp3',
+		startCallback: function(){
 		// is called, when the elevator starts moving
 			jQuery('body').addClass('spaceboots');
 		},
-		endcallback: function() {
+		endCallback: function() {
 		// is called, when the elevator reached target level
 			jQuery('body').removeClass('spaceboots');
 		}
-
-
     });
 
 

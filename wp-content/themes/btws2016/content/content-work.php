@@ -100,13 +100,13 @@ endif;
 		<?php $prev_post = get_previous_post();
 			if (!empty( $prev_post )): ?>
 				<li>
-					<a href="<?php echo get_permalink( $prev_post->ID ); ?>">Réalisations précédente<!--  : <?php echo $prev_post->post_title; ?> --></a>
+					<a href="<?php echo get_permalink( $prev_post->ID ); ?>" class="see-more-link"><?php echo get_the_title($prev_post->ID); ?></a>
 				</li>
 			<?php endif; ?>
 			<?php $next_post = get_next_post();
 			if ( is_a( $next_post , 'WP_Post' ) ) { ?>
 			<li>
-				<a href="<?php echo get_permalink( $next_post->ID ); ?>">Réalisations suivante<!--  : <?php echo get_the_title( $next_post->ID ); ?> --></a>
+				<a href="<?php echo get_permalink( $next_post->ID ); ?>" class="see-more-link"><?php echo get_the_title($next_post->ID) ?></a>
 			</li>
 			
 			<?php } ?>

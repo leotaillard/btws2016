@@ -14,10 +14,14 @@ if ( ! class_exists( 'NgfbSubmenuSharing' ) && class_exists( 'NgfbAdmin' ) ) {
 
 		public $website = array();
 
-		public function __construct( &$plugin, $id, $name ) {
+		protected $website_id = '';
+		protected $website_name = '';
+
+		public function __construct( &$plugin, $id, $name, $lib ) {
 			$this->p =& $plugin;
 			$this->menu_id = $id;
 			$this->menu_name = $name;
+			$this->menu_lib = $lib;
 			$this->set_objects();
 			$this->p->util->add_plugin_actions( $this, array(
 				'form_content_metaboxes_sharing' => 1,
@@ -129,9 +133,14 @@ if ( ! class_exists( 'NgfbSubmenuSharing' ) && class_exists( 'NgfbAdmin' ) ) {
 		}
 
 		public function show_metabox_website() {
-			$this->p->util->do_table_rows(
-				$this->get_rows( null, null ),
-				( empty( $this->id ) ? '' : 'metabox-website-'.$this->id ),
+			$metabox = 'website';
+			$key = $this->website_id;
+			$this->p->util->do_table_rows( 
+				array_merge( 
+					$this->get_rows( $metabox, $key ),
+					apply_filters( $this->p->cf['lca'].'_'.$metabox.'_'.$key.'_rows', array(), $this->form )
+				),
+				'metabox-'.$metabox.'-'.$key,
 				'metabox-website'
 			);
 		}
@@ -159,12 +168,12 @@ if ( ! class_exists( 'NgfbSubmenuSharing' ) && class_exists( 'NgfbAdmin' ) ) {
 					$rows[] = $this->p->util->get_th( _x( 'Position in Content Text',
 						'option label', 'nextgen-facebook' ), null, 'buttons_pos_content' ).
 					'<td>'.$this->form->get_select( 'buttons_pos_content',
-						NgfbSharing::$cf['sharing']['position'] ).'</td>';
+						$this->p->cf['sharing']['position'] ).'</td>';
 
 					$rows[] = $this->p->util->get_th( _x( 'Position in Excerpt Text',
 						'option label', 'nextgen-facebook' ), null, 'buttons_pos_excerpt' ).
 					'<td>'.$this->form->get_select( 'buttons_pos_excerpt', 
-						NgfbSharing::$cf['sharing']['position'] ).'</td>';
+						$this->p->cf['sharing']['position'] ).'</td>';
 
 					break;
 			}
@@ -178,7 +187,7 @@ if ( ! class_exists( 'NgfbSubmenuSharing' ) && class_exists( 'NgfbAdmin' ) ) {
 			$max = 2;
 			$html = '<table>';
 			$show_on = apply_filters( $this->p->cf['lca'].'_sharing_show_on', 
-				NgfbSharing::$cf['sharing']['show_on'], $prefix );
+				$this->p->cf['sharing']['show_on'], $prefix );
 			foreach ( $show_on as $suffix => $desc ) {
 				$col++;
 				$class = isset( $this->p->options[$prefix.'_on_'.$suffix.':is'] ) &&

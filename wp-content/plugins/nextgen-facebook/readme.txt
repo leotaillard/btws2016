@@ -10,7 +10,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.txt
 Requires At Least: 3.1
 Tested Up To: 4.4
-Stable Tag: 8.19.2
+Stable Tag: 8.20.1.1
 
 Display your content in the best possible way on Facebook, Google+, Twitter, Pinterest, etc. - no matter how your webpage is shared!
 
@@ -381,6 +381,42 @@ This release schedule keeps the code stable and reliable, at the cost of more fr
 * [GitHub](https://github.com/SurniaUlula/nextgen-facebook)
 * [WordPress.org](https://wordpress.org/plugins/nextgen-facebook/developers/)
 
+= Version 8.20.1.1 (2015/12/27) =
+
+Official announcement: N/A
+
+* **New Features**
+	* Added a "Copy to clipboard" icon for the sharing and short URLs under the Social Preview tab in the Social Settings metabox.
+* **Improvements**
+	* Added an information notice when checking the post/page for duplicate meta tags.
+* **Bugfixes**
+	* Fixed the `get_admin_url()` method, which returned empty URLs, when only hash / query fragments were passed as arguments.
+* **Developer Notes**
+	* Renamed and updated the share/lib/cacert.pem file to share/lib/ca-bundle.crt.
+	* Moved `NgfbSharing::$cf['opt']['preset']` to `NgfbConfig::$cf['opt']['preset']`.
+	* Moved `NgfbSharing::$cf['sharing']` to `NgfbConfig::$cf['sharing']`.
+
+= Version 8.20.0 (2015/12/24) =
+
+Official announcement: N/A
+
+* **New Features**
+	* Added a new "Your Social Settings" menu page with the user profile Social Settings metabox (and removed it from the "Your Profile" page).
+* **Improvements**
+	* Cleaned-up the side metaboxes on settings pages by selectively adding them certain pages and simplifying their content.
+	* Added disabled and internal meta tags to the "Head Tags" list in the Social Settings metabox (shown as gray on gray).
+* **Bugfixes**
+	* Fixed the Tweet button text with additional encoding for emoji characters.
+	* Fixed the 'article:published_time' and 'article:modified_time' values on post editing pages.
+* **Developer Notes**
+	* Added a call to `wp_encode_emoji()` for all encoded string values.
+	* Added a new `$this->menu_lib` property to all setting pages (value passed to constructor).
+	* Renamed the `NGFB_ADD_SETTINGS_PRIORITY` constant to `NGFB_ADD_SUBMENU_PRIORITY`.
+	* Renamed the website class `$id` and `$name` properties to `$website_id` and `$website_name`.
+	* Moved image size definitions from the 'admin_init' hook to 'current_screen'.
+	* Moved `load_meta_page()` methods from the 'admin_head' hook to 'current_screen'.
+	* Refactored the `add_plugin_image_sizes()` method to handle a variety of WP object classes.
+
 = Version 8.19.2 (2015/12/16) =
 
 Official announcement: N/A
@@ -498,15 +534,11 @@ Official announcement: http://surniaulula.com/2015/11/28/ngfb-wpsso-update-new-h
 
 == Upgrade Notice ==
 
-= 8.19.2 =
+= 8.20.1.1 =
 
-2015/12/16 - Added a new "Essential Settings" page. Added encoding of special / foreign characters in URL meta tag values.
+2015/12/27 - Added a "Copy to clipboard" icon for sharing and short URLs under the Social Preview tab, added an information notice when checking for duplicate meta tags. Fixed action button URLs on NGFB settings pages.
 
-= 8.19.1 =
+= 8.20.0 =
 
-2015/12/14 - Fixed an incorrect CSS class name for the shortcode buttons.
-
-= 8.19.0 =
-
-2015/12/13 - Added a new Google / Schema "Author Name Format" option. Additional schema and JSON improvements, including new JSON filter hooks.
+2015/12/24 - Added a new "Your Social Settings" menu page, fixed 'article:published_time' and 'article:modified_time' values on post editing pages, added a call to wp_encode_emoji() for all encoded strings.
 

@@ -46,6 +46,9 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 
 			$url = isset( $this->p->cf['plugin'][$lca]['url'] ) ?
 				$this->p->cf['plugin'][$lca]['url'] : array();
+
+			$fb_recommends = __( 'Facebook has published a preference for Open Graph image dimensions of 1200x630px cropped (for retina and high-PPI displays), 600x315px cropped as a minimum (the default settings value), and ignores images smaller than 200x200px.', 'nextgen-facebook' );
+
 			/*
 			 * All tooltips
 			 */
@@ -124,9 +127,6 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 				 */
 				} elseif ( strpos( $idx, 'tooltip-meta-' ) === 0 ) {
 					switch ( $idx ) {
-						case 'tooltip-meta-social-preview':
-						 	$text = 'The Open Graph social preview shows an <em>example</em> of a typical share on a social website. Images are displayed using Facebooks suggested minimum image dimensions of 600x315px. Actual shares on Facebook and other social networks may look significantly different than this <em>example</em> (depending on the viewing platform resolution, orientation, etc.).';
-						 	break;
 						case 'tooltip-meta-og_title':
 							$text = 'A custom title for the Facebook / Open Graph, Pinterest Rich Pin, Twitter Card meta tags (all Twitter Card formats), and the Pinterest, Tumblr, and Twitter sharing captions / texts, depending on some option settings.';
 						 	break;
@@ -149,7 +149,7 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 							$text = 'A custom Image ID to include first in the Facebook / Open Graph, Pinterest Rich Pin, and \'Large Image Summary\' Twitter Card meta tags,'.( empty( $this->p->is_avail['ssb'] ) ? '' : ' along with the Pinterest and Tumblr social sharing buttons,' ).' before any featured, attached, or content images.';
 						 	break;
 						case 'tooltip-meta-og_img_url':
-							$text = 'A custom image URL (instead of an Image ID) to include first in the Facebook / Open Graph, and \'Large Image Summary\' Twitter Card meta tags. Please make sure your custom image is large enough, or it may be ignored by the social website(s). Facebook recommends an image size of 1200x630 (for retina and high-PPI displays), 600x315 as a minimum, and will ignore any images less than 200x200 (1200x1200 is recommended). <em>This field is disabled if an Image ID has been specified</em>.';
+							$text = 'A custom image URL (instead of an Image ID) to include first in the Facebook / Open Graph, and \'Large Image Summary\' Twitter Card meta tags. Please make sure your custom image is large enough, or it may be ignored by the social website(s). '.$fb_recommends.' <em>This field is disabled if an Image ID has been specified</em>.';
 							break;
 						case 'tooltip-meta-og_img_max':
 							$text = 'The maximum number of images to include in the Facebook / Open Graph meta tags.';
@@ -201,7 +201,7 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 						 * 'Priority Media' settings
 						 */
 						case 'tooltip-og_img_dimensions':
-							$text = 'The image dimensions used in the Facebook / Open Graph meta tags (the default dimensions are '.$this->p->opt->get_defaults( 'og_img_width' ).'x'.$this->p->opt->get_defaults( 'og_img_height' ).' '.( $this->p->opt->get_defaults( 'og_img_crop' ) == 0 ? 'un' : '' ).'cropped). Facebook recommends 1200x630 cropped (for retina and high-PPI displays), and 600x315 as a minimum. <strong>1200x1200 cropped provides the greatest compatibility with all social websites (Facebook, Google+, LinkedIn, etc.)</strong>. Note that original images in the WordPress Media Library and/or NextGEN Gallery must be larger than your chosen image dimensions.';
+							$text = 'The image dimensions used in the Facebook / Open Graph meta tags (the default dimensions are '.$this->p->opt->get_defaults( 'og_img_width' ).'x'.$this->p->opt->get_defaults( 'og_img_height' ).' '.( $this->p->opt->get_defaults( 'og_img_crop' ) == 0 ? 'un' : '' ).'cropped). '.$fb_recommends.' Note that images in the WordPress Media Library and/or NextGEN Gallery must be larger than your chosen image dimensions (WordPress does not upscale images).';
 							break;
 						case 'tooltip-og_def_img_id':
 							$text = 'The ID number and media location of your default image (example: 123). The Default Image ID will be used as a <strong>fallback for Posts and Pages that do not have any images</strong> <em>featured</em>, <em>attached</em>, or suitable &lt;img/&gt; HTML tags in their content. The ID number for images in the WordPress Media Library can be found in the URL when editing an image (post=123 in the URL, for example). The NextGEN Gallery image IDs are easier to find -- it\'s the number in the first column when viewing a Gallery.';
@@ -628,6 +628,9 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 			 */
 			} elseif ( strpos( $idx, 'info-' ) === 0 ) {
 				switch ( $idx ) {
+					case 'info-meta-social-preview':
+					 	$text = '<p style="text-align:right;">The Open Graph social preview shows an <em>example</em> of a typical share on a social website. Images are displayed using Facebooks suggested minimum image dimensions of 600x315px. Actual shares on Facebook and other social websites may look significantly different than this example (depending on the application platform, resolution, orientation, etc.).</p>';
+					 	break;
 					case 'info-plugin-tid':
 						$um_lca = $this->p->cf['lca'].'um';
 						$um_short = $this->p->cf['plugin'][$um_lca]['short'];
@@ -658,7 +661,7 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 						$text = '<blockquote class="top-info"><p>'.sprintf( __( '%s adds the following Google / SEO, Facebook, Open Graph, Rich Pin, Schema, and Twitter Card HTML tags to the <code>&lt;head&gt;</code> section of your webpages.', 'nextgen-facebook' ), $atts['short'] ).' '.__( 'If your theme or another plugin already creates one or more of these HTML tags, you can uncheck them here to prevent duplicates from being added.', 'nextgen-facebook' ).' '.__( 'As an example, the "meta name description" HTML tag is automatically unchecked if a <em>known</em> SEO plugin is detected.', 'nextgen-facebook' ).' '.__( 'The "meta name canonical" HTML tag is unchecked by default since themes often include this meta tag in their header template(s).', 'nextgen-facebook' ).'</p></blockquote>';
 						break;
 					case 'info-image-dimensions':
-						$text = '<blockquote class="top-info"><p>'.sprintf( __( '%s uses several image dimensions, based on their intended use (Facebook / Open Graph, Twitter Cards, Pinterest Rich Pins, etc.).', 'nextgen-facebook' ), $atts['short'] ).' '.__( 'Facebook has published a preference for images measuring 1200x630px (to support retina and high-PPI displays), but horizontally cropped images may not show as well on all social sites.', 'nextgen-facebook' ).' '.__( 'A good compromise for your Open Graph image dimensions might be 1200x1200px cropped.', 'nextgen-facebook' ).' '.__( 'If you use these dimensions, make sure your original images are at least 1200px in <em>both</em> width and height.', 'nextgen-facebook' ).'</p></blockquote>';
+						$text = '<blockquote class="top-info"><p>'.sprintf( __( '%s allows you to control image dimensions based on their intended use (Facebook / Open Graph, Twitter Cards, Pinterest Rich Pins, etc.).', 'nextgen-facebook' ), $atts['short'] ).' '.$fb_recommends.'</p></blockquote>';
 						break;
 					case 'info-social-accounts':
 						$text = '<blockquote class="top-info"><p>'.__( 'The website / business social account values are used for SEO, Schema, Open Graph, and other social meta tags &ndash; including publisher (Organization) social markup for Google Search.', 'nextgen-facebook' ).' '.sprintf( __( 'See the <a href="%s">Google / Schema settings tab</a> to define a website / business logo for Google Search, and/or enable / disable the addition of publisher (Organization) and/or author (Person) JSON-LD markup in your webpage headers.', 'nextgen-facebook' ), $this->p->util->get_admin_url( 'general#sucom-tabset_pub-tab_google' ) ).'</p></blockquote>';
@@ -708,10 +711,10 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 						break;
 					case 'notice-pro-tid-missing':
 						if ( ! is_multisite() )
-							$text = '<b>'.sprintf( __( 'The %1$s plugin %2$s option is empty.', 'nextgen-facebook' ), $atts['name'], _x( 'Pro Authentication ID', 'option label', 'nextgen-facebook' ) ).'</b> '.sprintf( __( 'To enable Pro version features and allow the plugin to authenticate itself for updates, please enter the unique Authentication ID you received by email on the <a href="%s">Pro Licenses settings page</a>.', 'nextgen-facebook' ), $this->p->util->get_admin_url( 'licenses' ) );
+							$text = '<p><b>'.sprintf( __( 'The %1$s plugin %2$s option is empty.', 'nextgen-facebook' ), $atts['name'], _x( 'Pro Authentication ID', 'option label', 'nextgen-facebook' ) ).'</b> '.sprintf( __( 'To enable Pro version features and allow the plugin to authenticate itself for updates, please enter the unique Authentication ID you received by email on the <a href="%s">Pro Licenses settings page</a>.', 'nextgen-facebook' ), $this->p->util->get_admin_url( 'licenses' ) ).'</p>';
 						break;
 					case 'notice-pro-not-installed':
-						$text = sprintf( __( 'An Authentication ID has been entered for %s, but the Pro version is not yet installed &ndash; don\'t forget to update this plugin to install the latest Pro version.', 'nextgen-facebook' ), $atts['name'] );
+						$text = sprintf( __( '<b>An Authentication ID has been entered for %s, but the Pro version is not yet installed</b> &ndash; don\'t forget to update this plugin to install the latest Pro version. ;-)', 'nextgen-facebook' ), $atts['name'] );
 						break;
 					case 'notice-um-extension-required':
 					case 'notice-um-activate-extension':
@@ -721,13 +724,13 @@ if ( ! class_exists( 'NgfbMessages' ) ) {
 						$um_latest = $this->p->cf['plugin'][$um_lca]['url']['latest_zip'];
 						$upload_url = get_admin_url( null, 'plugin-install.php?tab=upload' );
 
-						$text = '<p>'.sprintf( __( 'At least one Authentication ID has been entered on the <a href="%1$s">Pro Licenses settings page</a>, but the <b>%2$s</b> plugin is not active.', 'nextgen-facebook' ), $this->p->util->get_admin_url( 'licenses' ), $um_name ).' ';
+						$text = '<p><b>'.sprintf( __( 'At least one Authentication ID has been entered on the <a href="%1$s">Pro Licenses settings page</a>, but the %2$s plugin is not active.', 'nextgen-facebook' ), $this->p->util->get_admin_url( 'licenses' ), $um_name ).'</b> ';
 
 						if ( $idx === 'notice-um-extension-required' ) {
-							$text .= sprintf( __( 'This <b>Free extension</b> is required to update and enable the %s plugin and its Pro extensions.', 'nextgen-facebook' ), $atts['name_pro'] ).'</p><ol><li><b>'.sprintf( __( 'Download the Free <a href="%1$s">%2$s plugin archive</a> (ZIP).', 'nextgen-facebook' ), $um_latest, $um_name ).'</b></li><li><b>'.sprintf( __( 'Then <a href="%s">upload and activate the plugin</a> on the WordPress plugin upload page.', 'nextgen-facebook' ), $upload_url ).'</b></li></ol>';
+							$text .= sprintf( __( 'This Free plugin is required to update and enable the %s plugin and its Pro extensions.', 'nextgen-facebook' ), $atts['name_pro'] ).'</p><ol><li><b>'.sprintf( __( 'Download the Free <a href="%1$s">%2$s plugin archive</a> (ZIP).', 'nextgen-facebook' ), $um_latest, $um_name ).'</b></li><li><b>'.sprintf( __( 'Then <a href="%s">upload and activate the plugin</a> on the WordPress plugin upload page.', 'nextgen-facebook' ), $upload_url ).'</b></li></ol>';
 						} else $text .= '</p>';
 
-						$text .= '<p>'.sprintf( __( 'Once the %s extension has been activated, one or more Pro version updates may be available for your licensed plugin(s).', 'nextgen-facebook' ), $um_name ).'</p><p>'.sprintf( __( 'Read more <a href="%1$s" target="_blank">about the %2$s extension plugin</a>.', 'nextgen-facebook' ), $um_dl, $um_name ).'</p>';
+						$text .= '<p>'.sprintf( __( 'Once the %s extension has been activated, one or more Pro version updates may be available for your licensed plugin(s).', 'nextgen-facebook' ), $um_name ).' '.sprintf( __( 'Read more <a href="%1$s" target="_blank">about the %2$s extension plugin</a>.', 'nextgen-facebook' ), $um_dl, $um_name ).'</p>';
 						break;
 					default:
 						$text = apply_filters( $lca.'_messages_notice', $text, $idx, $atts );

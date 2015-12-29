@@ -26,15 +26,14 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 				if ( SucomUtil::is_post_page() ) {
 					add_action( 'add_meta_boxes', array( &$this, 'add_metaboxes' ) );
 					// load_meta_page() priorities: 100 post, 200 user, 300 taxonomy
-					add_action( 'admin_head', array( &$this, 'load_meta_page' ), 100 );
+					add_action( 'current_screen', array( &$this, 'load_meta_page' ), 100, 1 );
 					add_action( 'save_post', array( &$this, 'save_options' ), NGFB_META_SAVE_PRIORITY );
 					add_action( 'save_post', array( &$this, 'clear_cache' ), NGFB_META_CACHE_PRIORITY );
 					add_action( 'edit_attachment', array( &$this, 'save_options' ), NGFB_META_SAVE_PRIORITY );
 					add_action( 'edit_attachment', array( &$this, 'clear_cache' ), NGFB_META_CACHE_PRIORITY );
 
-					if ( isset( $this->p->options['plugin_shortlink'] ) &&
-						$this->p->options['plugin_shortlink'] )
-							add_action( 'get_shortlink', array( &$this, 'get_shortlink' ), 9000, 4 );
+					if ( ! empty( $this->p->options['plugin_shortlink'] ) )
+						add_action( 'get_shortlink', array( &$this, 'get_shortlink' ), 9000, 4 );
 
 				} elseif ( ! empty( $this->p->options['plugin_columns_post'] ) ) {
 
@@ -55,10 +54,10 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 			}
 		}
 
-		public function get_shortlink( $shortlink, $id, $context, $allow_slugs ) {
+		public function get_shortlink( $shortlink, $post_id, $context, $allow_slugs ) {
 			if ( isset( $this->p->options['plugin_shortener'] ) &&
 				$this->p->options['plugin_shortener'] !== 'none' ) {
-					$long_url = $this->p->util->get_sharing_url( $id );
+					$long_url = $this->p->util->get_sharing_url( $post_id );
 					$short_url = apply_filters( $this->p->cf['lca'].'_shorten_url',
 						$long_url, $this->p->options['plugin_shortener'] );
 					if ( $long_url !== $short_url )
@@ -107,23 +106,27 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 			return $this->p->webpage->get_description( $this->p->options['og_desc_len'], '...', $id );
 		}
 
-		// hooked into the admin_head action
-		public function load_meta_page() {
-			// all meta modules set this property, so use it to optimize code execution
-			if ( ! empty( NgfbMeta::$head_meta_tags ) )
-				return;
+		// hooked into the current_screen action
+		public function load_meta_page( $screen = false ) {
 
-			$screen_id = SucomUtil::get_screen_id();
+			// all meta modules set this property, so use it to optimize code execution
+			if ( ! empty( NgfbMeta::$head_meta_tags ) 
+				|| ! isset( $screen->id ) )
+					return;
+
 			if ( $this->p->debug->enabled ) {
 				$this->p->debug->mark();
-				$this->p->debug->log( 'screen_id: '.$screen_id );
+				$this->p->debug->log( 'screen id: '.$screen->id );
 				$this->p->util->log_is_functions();
 			}
 
-			// check for list type pages
-			if ( strpos( $screen_id, 'edit-' ) !== false ||
-				$screen_id === 'upload' )
+			$lca = $this->p->cf['lca'];
+			switch ( $screen->id ) {
+				case 'upload':
+				case ( strpos( $screen->id, 'edit-' ) === 0 ? true : false ):	// posts list table
 					return;
+					break;
+			}
 
 			// make sure we have at least a post type and post status
 			if ( ( $obj = $this->p->util->get_post_object() ) === false ||
@@ -135,6 +138,7 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 				0 : $obj->ID;
 
 			if ( $obj->post_status !== 'auto-draft' ) {
+
 				$post_type = get_post_type_object( $obj->post_type );
 				$add_metabox = empty( $this->p->options[ 'plugin_add_to_'.$post_type->name ] ) ? false : true;
 
@@ -160,7 +164,6 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 				}
 			}
 
-			$lca = $this->p->cf['lca'];
 			$action_query = $lca.'-action';
 			if ( ! empty( $_GET[$action_query] ) ) {
 				$action_name = SucomUtil::sanitize_hookname( $_GET[$action_query] );
@@ -200,10 +203,21 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 				! in_array( $obj->post_type, $ptns ) )
 					return $post_id;
 
+			$charset = get_bloginfo( 'charset' );
 			$permalink = get_permalink( $post_id );
+			$permalink_html = wp_encode_emoji( htmlentities( urldecode( $permalink ), 
+				ENT_QUOTES, $charset, false ) );	// double_encode = false
 			$permalink_no_meta = add_query_arg( array( 'NGFB_META_TAGS_DISABLE' => 1 ), $permalink );
 			$check_opts = apply_filters( $this->p->cf['lca'].'_check_head_meta_options',
 				SucomUtil::preg_grep_keys( '/^add_/', $this->p->options, false, '' ), $post_id );
+
+			if ( current_user_can( 'manage_options' ) )
+				$notice_suffix = ' ('.sprintf( __( 'see <a href="%s">Theme Integration</a> settings', 'nextgen-facebook' ),
+					$this->p->util->get_admin_url( 'advanced#sucom-tabset_plugin-tab_integration' ) ).')...';
+			else $notice_suffix = '...';
+
+			$this->p->notice->inf( sprintf( __( 'Checking %1$s webpage header for duplicate meta tags', 'nextgen-facebook' ), 
+				'<a href="'.$permalink.'">'.$permalink_html.'</a>' ).$notice_suffix, true );
 
 			// use the permalink and have get_head_meta() remove our own meta tags
 			// to avoid issues with caching plugins that ignore query arguments
@@ -275,18 +289,6 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 			if ( empty( $this->p->is_avail['mt'] ) )
 				unset( $tabs['tags'] );
 
-			/*
-			if ( NgfbMeta::$head_meta_info['psn'] !== 'auto-draft' &&
-				NgfbMeta::$head_meta_info['psn'] !== 'publish' &&
-				NgfbMeta::$head_meta_info['ptn'] !== 'Attachment' ) {
-
-				$this->p->util->do_table_rows( array(
-					'<td><blockquote class="status-info"><p class="centered">'.
-						sprintf( __( 'The %s must be published with public visibility in order for social crawlers to access its meta tags.', 'nextgen-facebook' ), NgfbMeta::$head_meta_info['ptn'] ).'</p></blockquote></td>'
-				), 'metabox-'.$metabox.'-info' );
-			}
-			*/
-
 			$rows = array();
 			foreach ( $tabs as $key => $title )
 				$rows[$key] = array_merge( $this->get_rows( $metabox, $key, NgfbMeta::$head_meta_info ), 
@@ -311,7 +313,7 @@ if ( ! class_exists( 'NgfbPost' ) ) {
 						$rows[] = '<td><blockquote class="status-info"><p class="centered">'.
 							sprintf( __( 'Save a draft version or publish the %s to display the head tags preview.',
 								'nextgen-facebook' ), $head_info['ptn'] ).'</p></blockquote></td>';
-					else $rows = $this->get_rows_head_tags();
+					else $rows = $this->get_rows_head_tags( $this->form, $head_info );
 					break; 
 
 				case 'post-validate':

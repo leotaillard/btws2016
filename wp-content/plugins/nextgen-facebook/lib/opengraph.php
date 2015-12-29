@@ -196,11 +196,11 @@ if ( ! class_exists( 'NgfbOpengraph' ) ) {
 
 				// meta tag not defined or value is null
 				if ( ! isset( $og['article:published_time'] ) )
-					$og['article:published_time'] = trim( get_the_date('c') );
+					$og['article:published_time'] = trim( get_post_time( 'c', null, $post_id ) );
 
 				// meta tag not defined or value is null
 				if ( ! isset( $og['article:modified_time'] ) )
-					$og['article:modified_time'] = trim( get_the_modified_date('c') );
+					$og['article:modified_time'] = trim( get_post_modified_time( 'c', null, $post_id ) );
 			}
 
 			// get all videos
@@ -232,20 +232,29 @@ if ( ! class_exists( 'NgfbOpengraph' ) ) {
 						$this->p->debug->log( 'images disabled: maximum images = 0' );
 				} else {
 					$crawler_name = SucomUtil::crawler_name();
-					$img_sizes = array( 'og' => $this->p->cf['lca'].'-opengraph' );
 
 					if ( ! SucomUtil::get_const( 'NGFB_RICH_PIN_DISABLE' ) ) {
 						if ( is_admin() )
-							$img_sizes['rp'] = $this->p->cf['lca'].'-richpin';
+							$img_sizes = array(
+								'rp' => $this->p->cf['lca'].'-richpin',
+								'og' => $this->p->cf['lca'].'-opengraph',
+							);
 						elseif ( $crawler_name === 'pinterest' )
-							$img_sizes['og'] = $this->p->cf['lca'].'-richpin';
-					}
+							$img_sizes = array(
+								'og' => $this->p->cf['lca'].'-richpin',	// use the pinterest image size
+							);
+					} else $img_sizes = array(
+						'og' => $this->p->cf['lca'].'-opengraph',
+					);
 
 					$size_count = count( $img_sizes );
 					$size_num = 0;
 					foreach ( $img_sizes as $md_pre => $size_name ) {
-						$check_dupes = $size_num++ < $size_count ?
+						$check_dupes = ++$size_num < $size_count ?
 							false : true;
+
+						if ( $this->p->debug->enabled )
+							$this->p->debug->log( 'getting all images for '.$md_pre.' ('.$size_name.')' );
 
 						$og[$md_pre.':image'] = $this->get_all_images( $og_max['og_img_max'], 
 							$size_name, $post_id, $check_dupes, $md_pre );

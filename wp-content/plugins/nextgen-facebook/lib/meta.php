@@ -48,7 +48,7 @@ if ( ! class_exists( 'NgfbMeta' ) ) {
 					break;
 
 				case 'tags':	
-					$rows = $this->get_rows_head_tags();
+					$rows = $this->get_rows_head_tags( $this->form, $head_info );
 					break; 
 
 				case 'validate':
@@ -64,25 +64,27 @@ if ( ! class_exists( 'NgfbMeta' ) ) {
 			$prev_width = 600;
 			$prev_height = 315;
 			$div_style = 'width:'.$prev_width.'px; height:'.$prev_height.'px;';
-			$have_sizes = ( ! empty( $head_info['og:image:width'] ) && 
-				! empty( $head_info['og:image:height'] ) ) ? true : false;
+			$have_sizes = ( ! empty( $head_info['og:image:width'] ) &&
+				$head_info['og:image:width'] > 0 && 
+					! empty( $head_info['og:image:height'] ) &&
+						$head_info['og:image:height'] > 0 ) ? true : false;
 			$is_sufficient = ( $have_sizes === true && 
 				$head_info['og:image:width'] >= $prev_width && 
 				$head_info['og:image:height'] >= $prev_height ) ? true : false;
 
-			foreach ( array( 'og:image:secure_url', 'og:image' ) as $key ) {
-				if ( ! empty( $head_info[$key] ) ) {
+			foreach ( array( 'og:image:secure_url', 'og:image' ) as $img_url ) {
+				if ( ! empty( $head_info[$img_url] ) ) {
 					if ( $have_sizes === true ) {
 						$image_preview_html = '<div class="preview_img" style="'.$div_style.' 
 						background-size:'.( $is_sufficient === true ? 
 							'cover' : $head_info['og:image:width'].' '.$head_info['og:image:height'] ).'; 
-						background-image:url('.$head_info[$key].');" />'.( $is_sufficient === true ? 
+						background-image:url('.$head_info[$img_url].');" />'.( $is_sufficient === true ? 
 							'' : '<p>'.sprintf( _x( 'Image Dimensions Smaller<br/>than Suggested Minimum<br/>of %s',
 								'preview image error', 'nextgen-facebook' ),
 									$prev_width.'x'.$prev_height.'px' ).'</p>' ).'</div>';
 					} else {
 						$image_preview_html = '<div class="preview_img" style="'.$div_style.' 
-						background-image:url('.$head_info[$key].');" /><p>'.
+						background-image:url('.$head_info[$img_url].');" /><p>'.
 						_x( 'Image Dimensions Unknown<br/>or Not Available',
 							'preview image error', 'nextgen-facebook' ).'</p></div>';
 					}
@@ -94,9 +96,25 @@ if ( ! class_exists( 'NgfbMeta' ) ) {
 				$image_preview_html = '<div class="preview_img" style="'.$div_style.'"><p>'.
 				_x( 'No Open Graph Image Found', 'preview image error', 'nextgen-facebook' ).'</p></div>';
 
+			$long_url = $this->p->util->get_sharing_url( $head_info['post_id'] );
+			$short_url = apply_filters( $this->p->cf['lca'].'_shorten_url',
+				$long_url, $this->p->options['plugin_shortener'] );
+
+			if ( $long_url === $short_url &&
+				SucomUtil::is_post_page() )
+					$short_url = wp_get_shortlink();
+
+			$rows[] = $this->p->util->get_th( _x( 'Sharing URL',
+				'option label', 'nextgen-facebook' ), 'medium' ).
+			'<td>'.$form->get_copy_input( $long_url ).'</td>';
+
+			$rows[] = $this->p->util->get_th( _x( 'Short URL',
+				'option label', 'nextgen-facebook' ), 'medium' ).
+			'<td>'.$form->get_copy_input( $short_url ).'</td>';
+
 			$rows[] = $this->p->util->get_th( _x( 'Open Graph Example',
-				'option label', 'nextgen-facebook' ), 'medium', 'meta-social-preview' ).
-			'<td style="background-color:#e9eaed;border:1px dotted #e0e0e0;">
+				'option label', 'nextgen-facebook' ), 'medium' ).
+			'<td rowspan="2" style="background-color:#e9eaed;border:1px dotted #e0e0e0;">
 			<div class="preview_box" style="width:'.( $prev_width + 40 ).'px;">
 				<div class="preview_box" style="width:'.$prev_width.'px;">
 					'.$image_preview_html.'
@@ -110,10 +128,13 @@ if ( ! class_exists( 'NgfbMeta' ) ) {
 					</div>
 				</div>
 			</div></td>';
+
+			$rows[] = '<th class="medium textinfo">'.$this->p->msgs->get( 'info-meta-social-preview' ).'</th>';
+
 			return $rows;
 		}
 
-		public function get_rows_head_tags() {
+		public function get_rows_head_tags( &$form, &$head_info ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 			$rows = array();
@@ -125,11 +146,11 @@ if ( ! class_exists( 'NgfbMeta' ) ) {
 					elseif ( strpos( $parts[0], '<noscript ' ) === 0 )
 						$xtra_class = 'noscript';
 					$rows[] = '<td colspan="5" class="html '.$xtra_class.'"><pre>'.
-						esc_html( $parts[0] ).'</pre></th>';
+						esc_html( $parts[0] ).'</pre></td>';
 					if ( $xtra_class === 'script' ||
 						strpos( $parts[0], '</noscript>' ) === 0 )
 							$xtra_class = '';
-				} elseif ( isset( $parts[5] ) ) {
+				} elseif ( isset( $parts[5] ) && $parts[5] != -1 ) {
 					$rows[] = '<tr class="'.$xtra_class.' '.
 						( empty( $parts[0] ) ? 'is_disabled' : 'is_enabled' ).'">'.
 					'<th class="xshort">'.$parts[1].'</th>'.
@@ -147,13 +168,16 @@ if ( ! class_exists( 'NgfbMeta' ) ) {
 		public function get_rows_validate( &$form, &$head_info ) {
 			$rows = array();
 
-			$rows[] = $this->p->util->get_th( _x( 'Facebook Debugger', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'Facebook, Pinterest, LinkedIn, Google+, and most social websites use Open Graph meta tags.', 'nextgen-facebook' ).' '.__( 'The Facebook debugger allows you to refresh Facebook\'s cache, while also validating the Open Graph and Pinterest Rich Pin meta tags.', 'nextgen-facebook' ).' '.__( 'The Facebook debugger remains the most stable and reliable method to verify Open Graph meta tags. <strong>You may have to click the "Fetch new scrape information" button several times to refresh Facebook\'s cache</strong>.', 'nextgen-facebook' ).'</p></td><td class="validate">'.$form->get_button( 'Validate Open Graph', 'button-secondary', null, 'https://developers.facebook.com/tools/debug/og/object?q='.urlencode( $this->p->util->get_sharing_url( $head_info['post_id'] ) ), true ).'</td>';
+			$sharing_url = $this->p->util->get_sharing_url( $head_info['post_id'] );
+			$sharing_urlenc = urlencode( $sharing_url );
 
-			$rows[] = $this->p->util->get_th( _x( 'Google Structured Data Testing Tool', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'Verify that Google can correctly parse your structured data markup (meta tags, Schema, Microdata, and social JSON-LD markup) for Google Search and Google+.', 'nextgen-facebook' ).'</p></td><td class="validate">'.$form->get_button( 'Validate Data Markup', 'button-secondary', null, 'https://developers.google.com/structured-data/testing-tool/?url='.urlencode( $this->p->util->get_sharing_url( $head_info['post_id'] ) ), true ).'</td>';
+			$rows[] = $this->p->util->get_th( _x( 'Facebook Debugger', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'Facebook, Pinterest, LinkedIn, Google+, and most social websites use Open Graph meta tags.', 'nextgen-facebook' ).' '.__( 'The Facebook debugger allows you to refresh Facebook\'s cache, while also validating the Open Graph and Pinterest Rich Pin meta tags.', 'nextgen-facebook' ).' '.__( 'The Facebook debugger remains the most stable and reliable method to verify Open Graph meta tags. <strong>You may have to click the "Fetch new scrape information" button several times to refresh Facebook\'s cache</strong>.', 'nextgen-facebook' ).'</p></td><td class="validate">'.$form->get_button( _x( 'Validate Open Graph', 'submit button', 'nextgen-facebook' ), 'button-secondary', null, 'https://developers.facebook.com/tools/debug/og/object?q='.$sharing_urlenc, true ).'</td>';
 
-			$rows[] = $this->p->util->get_th( _x( 'Pinterest Rich Pin Validator', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'Validate the Open Graph / Rich Pin meta tags and apply to have them shown on Pinterest zoomed pins.', 'nextgen-facebook' ).'</p></td><td class="validate">'.$form->get_button( 'Validate Rich Pins', 'button-secondary', null, 'http://developers.pinterest.com/rich_pins/validator/?link='.urlencode( $this->p->util->get_sharing_url( $head_info['post_id'] ) ), true ).'</td>';
+			$rows[] = $this->p->util->get_th( _x( 'Google Structured Data Testing Tool', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'Verify that Google can correctly parse your structured data markup (meta tags, Schema, Microdata, and social JSON-LD markup) for Google Search and Google+.', 'nextgen-facebook' ).'</p></td><td class="validate">'.$form->get_button( _x( 'Validate Data Markup', 'submit button', 'nextgen-facebook' ), 'button-secondary', null, 'https://developers.google.com/structured-data/testing-tool/?url='.$sharing_urlenc, true ).'</td>';
 
-			$rows[] = $this->p->util->get_th( _x( 'Twitter Card Validator', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'The Twitter Card Validator does not accept query arguments &ndash; copy-paste the following sharing URL into the validation input field.', 'nextgen-facebook' ).'</p><p>'.$form->get_input_for_copy( $this->p->util->get_sharing_url( $head_info['post_id'] ), 'wide' ).'</p></td><td class="validate">'.$form->get_button( 'Validate Twitter Card', 'button-secondary', null, 'https://dev.twitter.com/docs/cards/validation/validator', true ).'</td>';
+			$rows[] = $this->p->util->get_th( _x( 'Pinterest Rich Pin Validator', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'Validate the Open Graph / Rich Pin meta tags and apply to have them shown on Pinterest zoomed pins.', 'nextgen-facebook' ).'</p></td><td class="validate">'.$form->get_button( _x( 'Validate Rich Pins', 'submit button', 'nextgen-facebook' ), 'button-secondary', null, 'http://developers.pinterest.com/rich_pins/validator/?link='.$sharing_urlenc, true ).'</td>';
+
+			$rows[] = $this->p->util->get_th( _x( 'Twitter Card Validator', 'option label', 'nextgen-facebook' ) ).'<td class="validate"><p>'.__( 'The Twitter Card Validator does not accept query arguments &ndash; copy-paste the following sharing URL into the validation input field.', 'nextgen-facebook' ).'</p><p>'.$form->get_copy_input( $sharing_url ).'</p></td><td class="validate">'.$form->get_button( _x( 'Validate Twitter Card', 'submit button', 'nextgen-facebook' ), 'button-secondary', null, 'https://dev.twitter.com/docs/cards/validation/validator', true ).'</td>';
 
 			return $rows;
 		}
@@ -439,16 +463,27 @@ if ( ! class_exists( 'NgfbMeta' ) ) {
 				}
 
 				if ( empty( $meta_image[$mt_pre.':image'] ) && ! empty( $url ) ) {
+
+					$width = $this->get_options( $id, $prefix.'_img_url:width' );
+					$height = $this->get_options( $id, $prefix.'_img_url:height' );
+
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'using custom '.$prefix.' image url = "'.$url.'"',
 							get_class( $this ) );	// log extended class name
+
 					list(
 						$meta_image[$mt_pre.':image'],
 						$meta_image[$mt_pre.':image:width'],
 						$meta_image[$mt_pre.':image:height'],
 						$meta_image[$mt_pre.':image:cropped'],
 						$meta_image[$mt_pre.':image:id']
-					) = array( $url, -1, -1, -1, -1 );
+					) = array(
+						$url,
+						( $width > 0 ? $width : -1 ), 
+						( $height > 0 ? $height : -1 ), 
+						-1,
+						-1
+					);
 				}
 
 				if ( ! empty( $meta_image[$mt_pre.':image'] ) &&

@@ -20,7 +20,7 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 			'feed_cache_exp' => 86400,	// 24 hours
 			'plugin' => array(
 				'ngfb' => array(
-					'version' => '8.19.2',		// plugin version
+					'version' => '8.20.1.1',		// plugin version
 					'short' => 'NGFB',		// short plugin name
 					'name' => 'NextGEN Facebook (NGFB)',
 					'desc' => 'Display your content in the best possible way on Facebook, Google+, Twitter, Pinterest, etc. - no matter how your webpage is shared!',
@@ -52,12 +52,13 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 						'pro_support' => 'http://nextgen-facebook.support.surniaulula.com/',
 					),
 					'lib' => array(			// libraries
+						'profile' => array (	// lib file descriptions will be translated
+							'social-settings' => 'Your Social Settings',
+						),
 						'setting' => array (	// lib file descriptions will be translated
-							'ngfb-separator-0' => 'NGFB',
 							'image-dimensions' => 'Social Image Dimensions',
 							'social-accounts' => 'Website / Business Social Accounts',
 							'contact-fields' => 'User Profile Contact Methods',
-							'ngfb-separator-1' => '',
 						),
 						'submenu' => array (	// lib file descriptions will be translated
 							'essential' => 'Essential Settings',
@@ -248,7 +249,7 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 					'og_site_description' => '',
 					'og_art_section' => 'none',
 					'og_img_width' => 600,
-					'og_img_height' => 600,
+					'og_img_height' => 315,
 					'og_img_crop' => 1,
 					'og_img_crop_x' => 'center',
 					'og_img_crop_y' => 'center',
@@ -561,6 +562,55 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 					'plugin_ngfb_tid' => '',
 					'plugin_ngfb_tid:use' => 'default',
 				),
+				'preset' => array(
+					'small_share_count' => array(
+						'fb_button' => 'share',
+						'fb_send' => 0,
+						'fb_show_faces' => 0,
+						'fb_action' => 'like',
+						'fb_type' => 'button_count',
+						'gp_action' => 'share',
+						'gp_size' => 'medium',
+						'gp_annotation' => 'bubble',
+						'gp_expandto' => '',
+						'twitter_size' => 'medium',
+						'twitter_count' => 'horizontal',
+						'linkedin_counter' => 'right',
+						'linkedin_showzero' => 1,
+						'pin_button_shape' => 'rect',
+						'pin_button_height' => 'small',
+						'pin_count_layout' => 'beside',
+						'buffer_count' => 'horizontal',
+						'reddit_type' => 'static-wide',
+						'managewp_type' => 'small',
+						'tumblr_button_style' => 'share_1',
+						'stumble_badge' => 1,
+					),
+					'large_share_vertical' => array(
+						'fb_button' => 'share',
+						'fb_send' => 0,
+						'fb_show_faces' => 0,
+						'fb_action' => 'like',
+						'fb_type' => 'box_count',
+						'fb_layout' => 'box_count',
+						'gp_action' => 'share',
+						'gp_size' => 'tall',
+						'gp_annotation' => 'vertical-bubble',
+						'gp_expandto' => '',
+						'twitter_size' => 'medium',
+						'twitter_count' => 'vertical',
+						'linkedin_counter' => 'top',
+						'linkedin_showzero' => '1',
+						'pin_button_shape' => 'rect',
+						'pin_button_height' => 'large',
+						'pin_count_layout' => 'above',
+						'buffer_count' => 'vertical',
+						'reddit_type' => 'static-tall-text',
+						'managewp_type' => 'big',
+						'tumblr_button_style' => 'share_2',
+						'stumble_badge' => 5,
+					),
+				),
 				'pre' => array(
 					'email' => 'email', 
 					'facebook' => 'fb', 
@@ -588,22 +638,31 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 					'jabber' => 'Google Talk',
 					'yim' => 'Yahoo IM',
 				),
+				'admin' => array(
+					'users' => array(
+						'page' => 'users.php',
+						'cap' => 'list_users',
+					),
+					'profile' => array(
+						'page' => 'profile.php',
+						'cap' => 'edit_posts',
+					),
+					'setting' => array(
+						'page' => 'options-general.php',
+						'cap' => 'manage_options',
+					),
+					'submenu' => array(
+						'page' => 'admin.php',
+						'cap' => 'manage_options',
+					),
+					'sitesubmenu' => array(
+						'page' => 'admin.php',
+						'cap' => 'manage_options',
+					),
+				),
 			),
 			'php' => array(				// php
 				'min_version' => '4.1.0',	// minimum php version
-			),
-			'follow' => array(
-				'size' => 24,
-				'src' => array(
-					'images/follow/Wordpress.png' => 'https://profiles.wordpress.org/jsmoriss/',
-					'images/follow/Github.png' => 'https://github.com/SurniaUlula',
-					'images/follow/Facebook.png' => 'https://www.facebook.com/SurniaUlulaCom',
-					'images/follow/GooglePlus.png' => 'https://plus.google.com/+SurniaUlula/',
-					//'images/follow/Linkedin.png' => 'https://www.linkedin.com/company/surnia-ulula-ltd',
-					'images/follow/Twitter.png' => 'https://twitter.com/surniaululacom',
-					//'images/follow/Youtube.png' => 'https://www.youtube.com/user/SurniaUlulaCom',
-					'images/follow/Rss.png' => 'http://surniaulula.com/category/application/wordpress/wp-plugins/ngfb/feed/',
-				),
 			),
 			'form' => array(
 				'og_image_col_width' => '70px',
@@ -831,6 +890,41 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 				'object' => true,
 				'transient' => true,
 			),
+			'follow' => array(
+				'size' => 24,
+				'src' => array(
+					'images/follow/Wordpress.png' => 'https://profiles.wordpress.org/jsmoriss/',
+					'images/follow/Github.png' => 'https://github.com/SurniaUlula',
+					'images/follow/Facebook.png' => 'https://www.facebook.com/SurniaUlulaCom',
+					'images/follow/GooglePlus.png' => 'https://plus.google.com/+SurniaUlula/',
+					//'images/follow/Linkedin.png' => 'https://www.linkedin.com/company/surnia-ulula-ltd',
+					'images/follow/Twitter.png' => 'https://twitter.com/surniaululacom',
+					//'images/follow/Youtube.png' => 'https://www.youtube.com/user/SurniaUlulaCom',
+					'images/follow/Rss.png' => 'http://surniaulula.com/category/application/wordpress/wp-plugins/ngfb/feed/',
+				),
+			),
+			'sharing' => array(
+				'show_on' => array( 
+					'content' => 'Content', 
+					'excerpt' => 'Excerpt', 
+					'sidebar' => 'CSS Sidebar', 
+					'admin_edit' => 'Admin Edit',
+				),
+				'style' => array(
+					'sharing' => 'All Buttons',
+					'content' => 'Content',
+					'excerpt' => 'Excerpt',
+					'sidebar' => 'CSS Sidebar',
+					'admin_edit' => 'Admin Edit',
+					'shortcode' => 'Shortcode',
+					'widget' => 'Widget',
+				),
+				'position' => array(
+					'top' => 'Top',
+					'bottom' => 'Bottom',
+					'both' => 'Both Top and Bottom',
+				),
+			),
 		);
 
 		// get_config is called very early, so don't apply filters unless instructed
@@ -897,6 +991,7 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 		public static function set_constants( $plugin_filepath ) { 
 			define( 'NGFB_FILEPATH', $plugin_filepath );						
 			define( 'NGFB_PLUGINDIR', trailingslashit( realpath( dirname( $plugin_filepath ) ) ) );
+			define( 'NGFB_PLUGINSLUG', self::$cf['plugin']['ngfb']['slug'] );		// nextgen-facebook
 			define( 'NGFB_PLUGINBASE', self::$cf['plugin']['ngfb']['base'] );		// nextgen-facebook/nextgen-facebook.php
 			define( 'NGFB_URLPATH', trailingslashit( plugins_url( '', $plugin_filepath ) ) );
 			define( 'NGFB_NONCE', md5( NGFB_PLUGINDIR.'-'.self::$cf['plugin']['ngfb']['version'].
@@ -949,7 +1044,7 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 			 * NGFB hook priorities
 			 */
 			$var_const['NGFB_ADD_MENU_PRIORITY'] = -20;
-			$var_const['NGFB_ADD_SETTINGS_PRIORITY'] = -10;
+			$var_const['NGFB_ADD_SUBMENU_PRIORITY'] = -10;
 			$var_const['NGFB_META_SAVE_PRIORITY'] = 6;
 			$var_const['NGFB_META_CACHE_PRIORITY'] = 9;
 			$var_const['NGFB_INIT_PRIORITY'] = 14;
@@ -962,7 +1057,7 @@ if ( ! class_exists( 'NgfbConfig' ) ) {
 			 * NGFB curl settings
 			 */
 			if ( defined( 'NGFB_PLUGINDIR' ) )
-				$var_const['NGFB_CURL_CAINFO'] = NGFB_PLUGINDIR.'share/curl/cacert.pem';
+				$var_const['NGFB_CURL_CAINFO'] = NGFB_PLUGINDIR.'share/curl/ca-bundle.crt';
 			$var_const['NGFB_CURL_USERAGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0';
 
 			// disable 3rd-party caching for duplicate meta tag checks
