@@ -156,7 +156,7 @@
     var elementButton = document.querySelector('.elevator svg');
     var elevator = new Elevator({
         element: elementButton,
-        duration: 5000,
+        duration: 6000,
         mainAudio: '<?php echo bloginfo('template_url'); ?>/assets/music/rocket.mp3',
         // endAudio:  '<?php echo bloginfo('template_url'); ?>/assets/music/ding.mp3',
 		startCallback: function(){

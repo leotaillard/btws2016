@@ -95,7 +95,7 @@
 							<?php 
 								else:
 							?>
-							<?php if ($post_thumbnail_url) { ?><a href="<?php the_permalink(); ?>"><img src="<?php echo $post_thumbnail_url[0]; ?>" alt="<?php the_title(); ?>"></a><?php } ?>
+							<?php if ($post_thumbnail_url) { ?><div class="blend-red"><a href="<?php the_permalink(); ?>"><img src="<?php echo $post_thumbnail_url[0]; ?>" alt="<?php the_title(); ?>"></a></div><?php } ?>
 							<?php 
 								endif;
 							?>

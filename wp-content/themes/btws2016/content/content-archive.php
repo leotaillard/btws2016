@@ -7,16 +7,32 @@
 				</div>
 			</div>
 
+		<?php // tags pour les articles
+		if(is_page(30)){ ?>
 			<div class="menu-filtre row">
 				<ul class="medium-12 medium-centered columns">
-					<li class="filter links" data-filter="all"><span><?php _e('Toutes les catégories','btws'); ?></span></li>
+					<li class="filter links" data-filter="all"><span><?php _e('Tout','btws'); ?></span></li>
 					<?php 
-						$categories=  get_categories('exclude=1');
-						foreach ($categories as $category) 
-							echo '<li class="filter links" data-filter=".'.$category->category_nicename.'"><span>'.$category->cat_name.'</span></li>';
+						$tags=  get_tags('exclude=1');
+						foreach ($tags as $tag) 
+							echo '<li class="filter links" data-filter=".'.$tag->slug.'"><span>'.$tag->name.'</span></li>';
 					?>
 				</ul>
 			</div>
+		<?php } ?>
+		<?php // tags pour les travaux
+		if(is_page(7)){ ?>
+			<div class="menu-filtre row">
+				<ul class="medium-12 medium-centered columns">
+					<li class="filter links" data-filter="all"><span><?php _e('Tout','btws'); ?></span></li>
+					<?php 
+						$tags=  get_terms('category_works', array('hide_empty' => false));
+						foreach ($tags as $tag) 
+							echo '<li class="filter links" data-filter=".'.$tag->slug.'"><span>'.$tag->name.'</span></li>';
+					?>
+				</ul>
+			</div>
+		<?php } ?>
 
 		</section>
 		<?php endwhile; ?>

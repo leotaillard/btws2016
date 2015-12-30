@@ -1,0 +1,33 @@
+@import "mixins.less";
+@import "colors.less";
+
+
+.menu-filtre {
+	ul{
+		padding:0;
+		margin: 0;
+	}
+	li{
+		cursor: pointer;
+		display: inline-block;
+		padding: 0px 5px;
+		margin: 4px 5px;
+		body.page-id-7 & {
+			border: 2px solid @basic_red;
+		}
+		body.page-id-30 & {
+			border: 2px solid @basic_blue;
+		}
+		.transition(all 0.5s linear);
+		&:hover{
+			body.page-id-7 & {
+				background: @basic_red;
+			}
+			body.page-id-30 & {
+				background: @basic_blue;
+			}
+			color:white;
+			.transition(all 0.5s linear);
+		}
+	}
+}

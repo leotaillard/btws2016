@@ -21,15 +21,18 @@ if( have_rows('content') ):
         if( get_row_layout() == 'images' ):
         	$image = get_sub_field('image');
         	$scroll = get_sub_field('scroll');
-
+        	$desktopOnly = get_sub_field('desktop_only');
+        	if ($desktopOnly == 1) {
+        		$class = 'hide-for-small-only';
+        	}
         	if ($scroll == 1) {
 		?>
-			<section class="btws-fixed-background" style="background-image:url(<?php echo $image['url']; ?>);" ></section>
+			<section class="btws-fixed-background <?php echo $class; ?>" style="background-image:url(<?php echo $image['url']; ?>);" ></section>
 		<?php
 			}
 		else{
 			?>
-			<section class="btws-fixed-background no-fixed" style="background-image:url(<?php echo $image['url']; ?>);" ></section>
+			<section class="btws-fixed-background no-fixed <?php echo $class; ?>" style="background-image:url(<?php echo $image['url']; ?>);" ></section>
 		<?php
 			}
 		?>
@@ -74,13 +77,13 @@ endif;
 		<?php $prev_post = get_previous_post();
 			if (!empty( $prev_post )): ?>
 				<li>
-					<a href="<?php echo get_permalink( $prev_post->ID ); ?>">gazette précédente</a>
+					<a href="<?php echo get_permalink( $prev_post->ID ); ?>"><?php echo get_the_title($prev_post->ID); ?></a>
 				</li>
 			<?php endif; ?>
 			<?php $next_post = get_next_post();
 			if ( is_a( $next_post , 'WP_Post' ) ) { ?>
 			<li>
-				<a href="<?php echo get_permalink( $next_post->ID ); ?>">gazette suivante</a>
+				<a href="<?php echo get_permalink( $next_post->ID ); ?>"><?php echo get_the_title($next_post->ID) ?></a>
 			</li>
 			
 			<?php } ?>
